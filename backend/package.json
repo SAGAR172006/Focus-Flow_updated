@@ -1,1 +1,22 @@
-{\n  "name": "focus-flow",\n  "version": "1.0.0",\n  "description": "A minimal backend for Focus Flow application",\n  "main": "index.js",\n  "scripts": {\n    "test": "echo 'Error: no test specified' && exit 1"\n  },\n  "author": "SAGAR172006",\n  "license": "ISC"\n}
+{
+  "name": "focus-flow-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Focus-Flow Backend API",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "build": "echo 'No build needed'",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "cors": "2.8.5",
+    "dotenv": "16.0.3",
+    "express": "4.18.2",
+    "helmet": "7.0.0",
+    "jsonwebtoken": "9.0.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "7.0.0"
+  }
+}
