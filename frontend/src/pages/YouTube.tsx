@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Search, Loader2, PlayCircle, Clock, Sparkles, ExternalLink } from "lucide-react";
 
 interface VideoResult {
@@ -37,17 +36,21 @@ const YouTube = () => {
 
     setIsSearching(true);
     try {
-      const { data, error } = await supabase.functions.invoke("youtube-search", {
-        body: { query: searchQuery, maxResults: 12 },
-      });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/youtube-search`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: searchQuery, maxResults: 12 }),
+});
 
-      if (error) throw error;
+if (!response.ok) throw new Error("Backend request failed");
+const data = await response.json();
 
-      setResults(data.videos || []);
-      toast({
-        title: "Search complete",
-        description: `Found ${data.videos?.length || 0} videos`,
-      });
+setResults(data.videos || []);
+toast({
+  title: "Search complete",
+  description: `Found ${data.videos?.length || 0} videos`,
+});
+
     } catch (error: any) {
       console.error("Error searching YouTube:", error);
       toast({

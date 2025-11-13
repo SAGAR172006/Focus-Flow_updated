@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
+import youtubeRoutes from './routes/youtube.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,6 +42,8 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api', youtubeRoutes);
+
 
 // 404 handler
 app.use((req, res) => {
