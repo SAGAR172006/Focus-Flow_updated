@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { supabase } from "@/integrations/supabase/client"; // Removed
-// import { User, Session } from "@supabase/supabase-js"; // Removed
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -15,51 +13,48 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Removed TypeScript interface
-
-const Layout = ({ children }) => { // Removed TypeScript types
+const Layout = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null); // Removed TypeScript types
-  // const [session, setSession] = useState(null); // Removed: Handled by httpOnly cookie
+  const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [isLoading, setIsLoading] = useState(true);
 
+  // Get the current path from react-router-dom to set the active button
+  const location = window.location.pathname;
+
   useEffect(() => {
-    // --- Replaced Supabase auth with custom API auth ---
+    // This effect will run once on mount and whenever the location changes
+    const currentNavItem = navItems.find(item => item.path === location);
+    if (currentNavItem) {
+      setCurrentPage(currentNavItem.id);
+    }
+  }, [location]);
+
+
+  useEffect(() => {
     const checkSession = async () => {
       try {
-        // This new endpoint checks the user's cookie and returns user data
-        const response = await fetch("/api/auth/me"); 
-        
+        const response = await fetch("/api/auth/me");
         if (!response.ok) {
-          // If response is 401 or other error, user is not logged in
           throw new Error("Not authenticated");
         }
-        
         const userData = await response.json();
-        setUser(userData); // Set user data (e.g., { email: "..." })
-
+        setUser(userData);
       } catch (error) {
-        // If any error (fetch, 401), redirect to auth page
         navigate("/auth");
       } finally {
         setIsLoading(false);
       }
     };
-
     checkSession();
-    // Removed Supabase listener
   }, [navigate]);
 
   const handleLogout = async () => {
     try {
-      // --- Replaced Supabase logout with custom API logout ---
-      // This endpoint should clear the auth cookie
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      // Always redirect to auth page after logout attempt
       setUser(null);
       navigate("/auth");
     }
@@ -126,18 +121,17 @@ const Layout = ({ children }) => { // Removed TypeScript types
       {/* Top Navigation Bar */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center justify-between px-6 py-3">
-          {/* Navigation with scroll */}
+          {/* Navigation - MODIFIED FOR WRAPPING */}
           <div className="flex-1 max-w-4xl mx-auto">
             <div
-              className="flex gap-8 overflow-x-auto scrollbar-hide scroll-smooth justify-center"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-4 justify-center flex-wrap" // Removed scroll classes, added flex-wrap
             >
               {navItems.map((item) => (
                 <Button
                   key={item.id}
                   variant={currentPage === item.id ? "secondary" : "ghost"}
                   className={cn(
-                    "shrink-0 gap-2",
+                    "shrink-0 gap-2", // Kept shrink-0 to prevent button stretching
                     currentPage === item.id && "bg-secondary/50"
                   )}
                   onClick={() => {
@@ -156,7 +150,6 @@ const Layout = ({ children }) => { // Removed TypeScript types
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-primary/20 flex items-center justify-center">
               <span className="text-sm font-medium text-primary">
-                {/* This assumes your /api/auth/me returns { email: "..." } */}
                 {user?.email?.[0].toUpperCase()}
               </span>
             </div>
@@ -167,8 +160,8 @@ const Layout = ({ children }) => { // Removed TypeScript types
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="pt-20 p-8">{children}</main>
+      {/* Main content - Added padding-top to account for a potentially taller header */}
+      <main className="pt-28 p-8">{children}</main> {/* Increased pt from 20 to 28 */}
     </div>
   );
 };

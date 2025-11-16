@@ -42,5 +42,8 @@ const TaskSchema = new mongoose.Schema({
   },
 });
 
+// This line compiles the schema into a model
 const Task = mongoose.model("Task", TaskSchema);
+
+// THIS IS THE FIX: You were exporting the Schema, not the Model.
 module.exports = Task;

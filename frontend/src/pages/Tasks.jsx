@@ -11,11 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Trash2, Check } from "lucide-react";
-// import { useToast } from "@/hooks/use-toast"; // Removed
-// import { supabase } from "@/integrations/supabase/client"; // Removed
 
 const Tasks = () => {
-  // const { toast } = useToast(); // Removed
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({
     title: "",
@@ -30,7 +27,6 @@ const Tasks = () => {
   }, []);
 
   const fetchTasks = async () => {
-    // --- Replaced Supabase with fetch ---
     try {
       const response = await fetch("/api/tasks");
       if (!response.ok) {
@@ -39,19 +35,17 @@ const Tasks = () => {
       const data = await response.json();
       setTasks(data || []);
     } catch (error) {
-      alert(`Failed to fetch tasks: ${error.message}`); // Replaced toast
+      alert(`Failed to fetch tasks: ${error.message}`);
     }
-    // --- End of replacement ---
   };
 
   const addTask = async () => {
     if (!newTask.title.trim()) {
-      alert("Title required: Please enter a task title"); // Replaced toast
+      alert("Title required: Please enter a task title");
       return;
     }
 
     setIsLoading(true);
-    // --- Replaced Supabase with fetch ---
     try {
       const response = await fetch("/api/tasks", {
         method: "POST",
@@ -61,8 +55,8 @@ const Tasks = () => {
       if (!response.ok) {
         throw new Error("Failed to add task");
       }
-      
-      alert("Task added! Your task has been created."); // Replaced toast
+
+      alert("Task added! Your task has been created.");
       setNewTask({
         title: "",
         description: "",
@@ -71,52 +65,53 @@ const Tasks = () => {
       });
       fetchTasks(); // Refresh list
     } catch (error) {
-      alert(`Failed to add task: ${error.message}`); // Replaced toast
+      alert(`Failed to add task: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
-    // --- End of replacement ---
   };
 
   const completeTask = async (taskId) => {
-    // --- Replaced Supabase with fetch ---
     try {
+      // --- THIS IS THE FIX ---
+      // The ID must be part of the URL
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           status: "completed",
-          completed_at: new Date().toISOString() 
+          completed_at: new Date().toISOString(),
         }),
       });
+      // --- END OF FIX ---
       if (!response.ok) {
         throw new Error("Failed to complete task");
       }
-      
-      alert("Task completed!"); // Replaced toast
+
+      alert("Task completed!");
       fetchTasks(); // Refresh list
     } catch (error) {
-      alert(`Failed to complete task: ${error.message}`); // Replaced toast
+      alert(`Failed to complete task: ${error.message}`);
     }
-    // --- End of replacement ---
   };
 
   const deleteTask = async (taskId) => {
-    // --- Replaced Supabase with fetch ---
     try {
+      // --- THIS IS THE FIX ---
+      // The ID must be part of the URL
       const response = await fetch(`/api/tasks/${taskId}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
+      // --- END OF FIX ---
       if (!response.ok) {
         throw new Error("Failed to delete task");
       }
 
-      alert("Task deleted"); // Replaced toast
+      alert("Task deleted");
       fetchTasks(); // Refresh list
     } catch (error) {
-      alert(`Failed to delete task: ${error.message}`); // Replaced toast
+      alert(`Failed to delete task: ${error.message}`);
     }
-    // --- End of replacement ---
   };
 
   const pendingTasks = tasks.filter((t) => t.status === "pending");
