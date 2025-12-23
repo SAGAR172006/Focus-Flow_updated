@@ -97,12 +97,12 @@ const Layout = ({ children }) => {
       icon: Youtube,
       path: "/youtube",
     },
-    {
+    /*
       id: "pdf-editor",
       label: "PDF Editor",
       icon: FileEdit,
       path: "/pdf-editor",
-    },
+    },*/
   ];
 
   if (isLoading) {

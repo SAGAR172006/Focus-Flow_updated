@@ -28,7 +28,9 @@ const Tasks = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch("/api/tasks");
+      const response = await fetch("/api/tasks", {
+        credentials: 'include'
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch tasks");
       }
@@ -50,6 +52,7 @@ const Tasks = () => {
       const response = await fetch("/api/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify(newTask),
       });
       if (!response.ok) {
@@ -78,6 +81,7 @@ const Tasks = () => {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify({
           status: "completed",
           completed_at: new Date().toISOString(),
@@ -101,6 +105,7 @@ const Tasks = () => {
       // The ID must be part of the URL
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "DELETE",
+        credentials: 'include',
       });
       // --- END OF FIX ---
       if (!response.ok) {
@@ -197,7 +202,7 @@ const Tasks = () => {
             ) : (
               pendingTasks.map((task) => (
                 <div
-                  key={task.id}
+                  key={task._id}
                   className="p-4 bg-background/50 rounded-lg border border-border/50 space-y-2"
                 >
                   <div className="flex items-start justify-between">
@@ -229,14 +234,14 @@ const Tasks = () => {
                       <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() => completeTask(task.id)}
+                        onClick={() => completeTask(task._id)}
                       >
                         <Check className="h-4 w-4" />
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() => deleteTask(task.id)}
+                        onClick={() => deleteTask(task._id)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -260,7 +265,7 @@ const Tasks = () => {
             ) : (
               completedTasks.map((task) => (
                 <div
-                  key={task.id}
+                  key={task._id}
                   className="p-4 bg-background/50 rounded-lg border border-border/50 opacity-75"
                 >
                   <div className="flex items-start justify-between">
@@ -275,7 +280,7 @@ const Tasks = () => {
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => deleteTask(task.id)}
+                      onClick={() => deleteTask(task._id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

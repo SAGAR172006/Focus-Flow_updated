@@ -8,7 +8,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Initialize Google AI (using the key from .env)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 router.use(protect);
 
@@ -94,8 +94,12 @@ router.post("/", async (req, res) => {
         const videoId = item.id.videoId;
         const details = videoDetailsMap.get(videoId);
         
+        console.log(`Processing video: ${videoId} - ${item.snippet.title}`);
         const transcript = await fetchTranscript(videoId);
+        console.log(`Transcript for ${videoId}: ${transcript ? 'Found' : 'Not found'}`);
+        
         const aiSummary = await getAiSummaryFromTranscript(transcript, item.snippet.title);
+        console.log(`AI Summary for ${videoId}: ${aiSummary.substring(0, 50)}...`);
 
         let duration = "N/A";
         if (details?.contentDetails?.duration) {
